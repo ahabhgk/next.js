@@ -295,7 +295,7 @@ pub fn get_usable_import_specifier(_items: &[ModuleItem]) -> String {
     String::from("_JSXStyle")
 }
 
-pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
+pub fn styled_jsx_import_decl(style_import_name: &str, style_import_path: &str) -> ModuleItem {
     ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
         asserts: None,
         span: DUMMY_SP,
@@ -310,7 +310,7 @@ pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
         })],
         src: Str {
             span: DUMMY_SP,
-            value: "next/dist/shared/lib/styled-jsx".into(),
+            value: style_import_path.into(),
             raw: None,
         },
     }))

@@ -21,7 +21,7 @@ use utils::*;
 mod transform_css;
 mod utils;
 
-pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName) -> impl Fold {
+pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, path: Option<String>) -> impl Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -41,6 +41,7 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName) -> impl Fold {
         nearest_scope_bindings: Default::default(),
         func_scope_level: Default::default(),
         style_import_name: Default::default(),
+        style_import_path: path,
         external_bindings: Default::default(),
         file_has_css_resolve: Default::default(),
         external_hash: Default::default(),
@@ -63,6 +64,7 @@ struct StyledJSXTransformer {
     nearest_scope_bindings: AHashSet<Id>,
     func_scope_level: u8,
     style_import_name: Option<String>,
+    style_import_path: Option<String>,
     external_bindings: Vec<Id>,
     file_has_css_resolve: bool,
     external_hash: Option<String>,
@@ -333,7 +335,12 @@ impl Fold for StyledJSXTransformer {
         if self.file_has_styled_jsx || self.file_has_css_resolve {
             prepend_stmt(
                 &mut new_items,
-                styled_jsx_import_decl(self.style_import_name.as_ref().unwrap()),
+                styled_jsx_import_decl(
+                    self.style_import_name.as_ref().unwrap(),
+                    self.style_import_path
+                        .as_ref()
+                        .unwrap_or(&"next/dist/shared/lib/styled-jsx".to_string()),
+                ),
             );
         }
 
